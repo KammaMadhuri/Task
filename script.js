@@ -1,31 +1,45 @@
-// Function to add a task to the list
+let taskId = 0;
+
 function addTask() {
     const taskInput = document.getElementById('taskInput');
-    const taskList = document.getElementById('taskList');
+    const taskValue = taskInput.value.trim();
 
-    // Get the task text and clear the input field
-    const taskText = taskInput.value.trim();
-    taskInput.value = '';
-
-    // Check if the task input is not empty
-    if (taskText !== '') {
-        // Create a new list item
-        const li = document.createElement('li');
-        li.innerText = taskText;
-
-        // Create a delete button for the task
-        const deleteBtn = document.createElement('button');
-        deleteBtn.innerText = 'Delete';
-        deleteBtn.onclick = function() {
-            taskList.removeChild(li);
-        };
-
-        // Append the delete button to the list item
-        li.appendChild(deleteBtn);
-
-        // Append the list item to the task list
-        taskList.appendChild(li);
-    } else {
+    if (taskValue === '') {
         alert('Please enter a task.');
+        return;
+    }
+
+    const task = {
+        id: taskId++,
+        text: taskValue
+    };
+
+    const li = document.createElement('li');
+    li.setAttribute('data-id', task.id);
+
+    li.appendChild(document.createTextNode(task.text));
+
+    const deleteButton = document.createElement('button');
+    deleteButton.className = 'delete-btn';
+    deleteButton.appendChild(document.createTextNode('Delete'));
+
+    li.appendChild(deleteButton);
+    document.getElementById('taskList').appendChild(li);
+
+    taskInput.value = '';
+}
+
+document.getElementById('taskList').addEventListener('click', function(e) {
+    if (e.target && e.target.classList.contains('delete-btn')) {
+        const li = e.target.closest('li');
+        const taskId = li.getAttribute('data-id');
+        removeTask(taskId);
+    }
+});
+
+function removeTask(taskId) {
+    const taskItem = document.querySelector(`li[data-id="${taskId}"]`);
+    if (taskItem) {
+        taskItem.remove();
     }
 }
